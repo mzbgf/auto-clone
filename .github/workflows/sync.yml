@@ -42,7 +42,6 @@ jobs:
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3
-        env: actions_step_debug: true
         with:
           name: artifact
           path: actlogs.txt
