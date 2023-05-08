@@ -15,7 +15,7 @@ jobs:
       - name: Check
         run: |
           mkdir -p ~/.ssh
-          log=$pwd/actlogs.txt
+          log=$PWD/actlogs.txt
           echo "begin" > $log
           echo "${{secrets.GITEE_RSA_PRIVATE_KEY}}" > ~/.ssh/id_rsa
           echo "github:" > $log
@@ -26,7 +26,7 @@ jobs:
           ssh -T git@gitee.com | tee -a $log
           git clone https://github.com/wearerequired/git-mirror-action
           git clone https://github.com/mzbgf/auto-clone
-          file=$pwd/auto-clone/sync.conf
+          file=$PWD/auto-clone/sync.conf
           cd ./git-mirror-action
 
       - name: Sync repositories 
