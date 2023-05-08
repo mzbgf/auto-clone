@@ -16,6 +16,10 @@ jobs:
         run: |
           mkdir -p ~/.ssh
           log=$PWD/actlogs.txt
+          echo "${{secrets.GITEE_RSA_PRIVATE_KEY}}" > id_rsa
+          chmod 600 id_rsa
+          eval "$(ssh-agent -s)" || true
+          ssh-add id_rsa || true
           echo "begin" > actlogs.txt
           ssh -T git@github.com | tee -a actlogs.txt
           echo "gitlab:" > actlogs.txt
