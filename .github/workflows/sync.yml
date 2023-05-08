@@ -20,24 +20,26 @@ jobs:
           chmod 600 id_rsa
           eval "$(ssh-agent -s)" || true
           ssh-add id_rsa || true
-          echo "begin" > actlogs.txt
+          echo "begin test" >> actlogs.txt
           ssh -T git@github.com | tee -a actlogs.txt || true
-          echo "gitlab:" > actlogs.txt
+          echo "gitlab:" >> actlogs.txt
           ssh -T git@gitlab.com | tee -a actlogs.txt || true
-          echo "gitee:" > actlogs.txt
+          echo "gitee:" >> actlogs.txt
           ssh -T git@gitee.com | tee -a actlogs.txt || true
           
           git clone https://github.com/wearerequired/git-mirror-action || true
           git clone https://github.com/mzbgf/auto-clone || true
           
           file=$PWD/auto-clone/sync.conf
+          
+          echo "" >> actlogs.txt
+          echo "begin Cloning..." >> actlogs.txt
           cd ./git-mirror-action
-
           egrep -v "^#|^$" $file | while read line; do
             source_repo=$(echo $line | awk '{print $1}') 
             target_repo=$(echo $line | awk '{print $2}')
             echo "Syncing $source_repo to $target_repo" | tee -a ../actlogs.txt
-            docker run --rm -e "SSH_PRIVATE_KEY=${{secrets.GITEE_RSA_PRIVATE_KEY}}" $(docker build -q .) "$source_repo" "$target_repo" || true
+            docker run --rm -e "SSH_PRIVATE_KEY=${{secrets.GITEE_RSA_PRIVATE_KEY}}" $(docker build -q .) "$source_repo" "$target_repo" | tee -a ../actlogs.txt || true
           done
           
           echo "view_log:"
