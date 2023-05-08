@@ -15,10 +15,15 @@ jobs:
       - name: Check
         run: |
           mkdir -p ~/.ssh
+          log=$pwd/actlogs.txt
+          echo "begin" > $log
           echo "${{secrets.GITEE_RSA_PRIVATE_KEY}}" > ~/.ssh/id_rsa
-          ssh -T git@github.com
-          ssh -T git@gitlab.com
-          ssh -T git@gitee.com
+          echo "github:" > $log
+          ssh -T git@github.com | tee -a $log
+          echo "gitlab:" > $log
+          ssh -T git@gitlab.com | tee -a $log
+          echo "gitee:" > $log
+          ssh -T git@gitee.com | tee -a $log
           git clone https://github.com/wearerequired/git-mirror-action
           git clone https://github.com/mzbgf/auto-clone
           file=$pwd/auto-clone/sync.conf
@@ -27,10 +32,12 @@ jobs:
       - name: Sync repositories 
         run: |
           egrep -v "^#|^$" $file | while read line; do
-            source_repo=$(echo $line | awk '{print $1}')
+            source_repo=$(echo $line | awk '{print $1}') 
             target_repo=$(echo $line | awk '{print $2}')
-            echo "Syncing $source_repo to $target_repo"
+            echo "Syncing $source_repo to $target_repo" | tee -a $log
             docker run --rm -e "SSH_PRIVATE_KEY=$(cat ~/.ssh/id_rsa)" $(docker build -q .) "$source_repo" "$target_repo"
           done
+          echo "view_log:"
+          cat $log
 
 
