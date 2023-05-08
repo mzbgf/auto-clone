@@ -42,11 +42,12 @@ jobs:
           
           echo "view_log:"
           cat ../actlogs.txt
+          cd ../
       
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
           name: artifact
-          path: ../actlogs.txt
+          path: actlogs.txt
 
 
