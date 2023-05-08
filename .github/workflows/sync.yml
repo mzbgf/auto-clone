@@ -13,41 +13,37 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Sync repositories
+        env: actions_step_debug: true
         run: |
-          mkdir -p ~/.ssh
-          log=$PWD/actlogs.txt
-          echo "${{secrets.GITEE_RSA_PRIVATE_KEY}}" > id_rsa
-          chmod 600 id_rsa
-          eval "$(ssh-agent -s)" || true
-          ssh-add id_rsa || true
-          echo "begin test" >> actlogs.txt
-          ssh -T git@github.com | tee -a actlogs.txt || true
-          echo "gitlab:" >> actlogs.txt
-          ssh -T git@gitlab.com | tee -a actlogs.txt || true
-          echo "gitee:" >> actlogs.txt
-          ssh -T git@gitee.com | tee -a actlogs.txt || true
+          echo "" > ${PWD}/.ssh/id_rsa
+          chmod 600 ${PWD}/.ssh/id_rsa
+          echo "${{secrets.GITEE_RSA_PRIVATE_KEY}}" > ${PWD}/.ssh/id_rsa
+          echo "begin test"
+          echo "github:"
+          ssh -T git@github.com || true
+          echo "gitlab:"
+          ssh -T git@gitlab.com || true
+          echo "gitee:"
+          ssh -T git@gitee.com || true
           
           git clone https://github.com/wearerequired/git-mirror-action || true
           git clone https://github.com/mzbgf/auto-clone || true
           
-          file=$PWD/auto-clone/sync.conf
+          file=${PWD}/auto-clone/sync.conf
           
-          echo "" >> actlogs.txt
-          echo "begin Cloning..." >> actlogs.txt
+          echo ""
+          echo "begin Cloning..."
           cd ./git-mirror-action
           egrep -v "^#|^$" $file | while read line; do
             source_repo=$(echo $line | awk '{print $1}') 
             target_repo=$(echo $line | awk '{print $2}')
-            echo "Syncing $source_repo to $target_repo" | tee -a ../actlogs.txt
-            docker run --rm -e "SSH_PRIVATE_KEY=${{secrets.GITEE_RSA_PRIVATE_KEY}}" $(docker build -q .) "$source_repo" "$target_repo" | tee -a ../actlogs.txt || true
+            echo "Syncing $source_repo to $target_repo"
+            docker run --rm -e "SSH_PRIVATE_KEY=${{secrets.GITEE_RSA_PRIVATE_KEY}}" $(docker build -q .) "$source_repo" "$target_repo" || true
           done
-          
-          echo "view_log:"
-          cat ../actlogs.txt
-          cd ../
-      
+
       - name: Upload artifact
         uses: actions/upload-artifact@v3
+        env: actions_step_debug: true
         with:
           name: artifact
           path: actlogs.txt
