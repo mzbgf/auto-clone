@@ -39,7 +39,7 @@ jobs:
           cat ../actlogs.txt
       
       - name: Upload artifact
-        uses: actions/upload-artifact
+        uses: actions/upload-artifact@v3
         with:
           name: artifact
           path: ../actlogs.txt
