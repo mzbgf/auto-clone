@@ -17,9 +17,10 @@ jobs:
 
       - name: Check
         run: |
+          mkdir -p ~/.ssh
           echo "${{secrets.GITEE_RSA_PRIVATE_KEY}}" > ~/.ssh/id_rsa
-          git clone https://github.com/wearerequired/git-mirror-action
-          cd git-mirror-action
+          git clone https://github.com/wearerequired/git-mirror-action docker-git-mirror
+          cd ./docker-git-mirror
 
       - name: Sync repositories 
         run: |
