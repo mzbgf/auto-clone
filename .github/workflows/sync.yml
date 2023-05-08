@@ -16,6 +16,9 @@ jobs:
         run: |
           mkdir -p ~/.ssh
           echo "${{secrets.GITEE_RSA_PRIVATE_KEY}}" > ~/.ssh/id_rsa
+          ssh -T git@github.com
+          ssh -T git@gitlab.com
+          ssh -T git@gitee.com
           git clone https://github.com/wearerequired/git-mirror-action
           git clone https://github.com/mzbgf/auto-clone
           file=$pwd/auto-clone/sync.conf
