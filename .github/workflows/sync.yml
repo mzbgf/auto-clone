@@ -13,7 +13,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Sync repositories
-        env: actions_step_debug: true
         run: |
           echo "" > ${PWD}/.ssh/id_rsa
           chmod 600 ${PWD}/.ssh/id_rsa
