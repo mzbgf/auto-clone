@@ -21,14 +21,14 @@ jobs:
           eval "$(ssh-agent -s)" || true
           ssh-add id_rsa || true
           echo "begin" > actlogs.txt
-          ssh -T git@github.com | tee -a actlogs.txt
+          ssh -T git@github.com | tee -a actlogs.txt || true
           echo "gitlab:" > actlogs.txt
-          ssh -T git@gitlab.com | tee -a actlogs.txt
+          ssh -T git@gitlab.com | tee -a actlogs.txt || true
           echo "gitee:" > actlogs.txt
-          ssh -T git@gitee.com | tee -a actlogs.txt
+          ssh -T git@gitee.com | tee -a actlogs.txt || true
           
-          git clone https://github.com/wearerequired/git-mirror-action
-          git clone https://github.com/mzbgf/auto-clone
+          git clone https://github.com/wearerequired/git-mirror-action || true
+          git clone https://github.com/mzbgf/auto-clone || true
           
           file=$PWD/auto-clone/sync.conf
           cd ./git-mirror-action
