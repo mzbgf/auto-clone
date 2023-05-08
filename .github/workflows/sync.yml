@@ -16,12 +16,12 @@ jobs:
         run: |
           mkdir -p ~/.ssh
           log=$PWD/actlogs.txt
-          echo "begin" > $log
-          ssh -T git@github.com | tee -a $log
-          echo "gitlab:" > $log
-          ssh -T git@gitlab.com | tee -a $log
-          echo "gitee:" > $log
-          ssh -T git@gitee.com | tee -a $log
+          echo "begin" > actlogs.txt
+          ssh -T git@github.com | tee -a actlogs.txt
+          echo "gitlab:" > actlogs.txt
+          ssh -T git@gitlab.com | tee -a actlogs.txt
+          echo "gitee:" > actlogs.txt
+          ssh -T git@gitee.com | tee -a actlogs.txt
           git clone https://github.com/wearerequired/git-mirror-action
           git clone https://github.com/mzbgf/auto-clone
           file=$PWD/auto-clone/sync.conf
@@ -32,16 +32,16 @@ jobs:
           egrep -v "^#|^$" $file | while read line; do
             source_repo=$(echo $line | awk '{print $1}') 
             target_repo=$(echo $line | awk '{print $2}')
-            echo "Syncing $source_repo to $target_repo" | tee -a $log
+            echo "Syncing $source_repo to $target_repo" | tee -a ../actlogs.txt
             docker run --rm -e "SSH_PRIVATE_KEY=${{secrets.GITEE_RSA_PRIVATE_KEY}}" $(docker build -q .) "$source_repo" "$target_repo"
           done
           echo "view_log:"
-          cat $log
+          cat ../actlogs.txt
       
       - name: Upload artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact
         with:
           name: artifact
-          path: $log
+          path: ../actlogs.txt
 
 
