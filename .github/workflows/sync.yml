@@ -16,7 +16,7 @@ jobs:
         run: |
           echo "" > ${PWD}/.ssh/id_rsa
           chmod 600 ${PWD}/.ssh/id_rsa
-          echo "${{secrets.GITEE_RSA_PRIVATE_KEY}}" > ${PWD}/.ssh/id_rsa
+          echo "${{secrets.RSA_PRIVATE_KEY}}" > ${PWD}/.ssh/id_rsa
           echo "begin test"
           echo "github:"
           ssh -T git@github.com || true
@@ -37,7 +37,7 @@ jobs:
             source_repo=$(echo $line | awk '{print $1}') 
             target_repo=$(echo $line | awk '{print $2}')
             echo "Syncing $source_repo to $target_repo"
-            docker run --rm -e "SSH_PRIVATE_KEY=${{secrets.GITEE_RSA_PRIVATE_KEY}}" $(docker build -q .) "$source_repo" "$target_repo" || true
+            docker run --rm -e "SSH_PRIVATE_KEY=${{secrets.RSA_PRIVATE_KEY}}" $(docker build -q .) "$source_repo" "$target_repo" || true
           done
 
       - name: Upload artifact
