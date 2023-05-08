@@ -40,7 +40,7 @@ jobs:
             echo "Syncing $source_repo to $target_repo"
             docker run --rm -e "SSH_PRIVATE_KEY=${{secrets.RSA_PRIVATE_KEY}}" $(docker build -q .) "$source_repo" "$target_repo" || true
           done
-          find / -name "runner-diagnostic-logs" 2> /dev/null
+          find / -name "runner-diagnostic-logs"
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3
