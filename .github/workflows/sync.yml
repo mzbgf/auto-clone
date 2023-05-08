@@ -15,11 +15,8 @@ jobs:
       - name: Check
         run: |
           mkdir -p ~/.ssh
-          key=$PWD/sshkey
           log=$PWD/actlogs.txt
           echo "begin" > $log
-          echo "${{secrets.GITEE_RSA_PRIVATE_KEY}}" > $key
-          echo "github:" > $log
           ssh -T git@github.com | tee -a $log
           echo "gitlab:" > $log
           ssh -T git@gitlab.com | tee -a $log
@@ -36,9 +33,15 @@ jobs:
             source_repo=$(echo $line | awk '{print $1}') 
             target_repo=$(echo $line | awk '{print $2}')
             echo "Syncing $source_repo to $target_repo" | tee -a $log
-            docker run --rm -e "SSH_PRIVATE_KEY=$(cat $key)" $(docker build -q .) "$source_repo" "$target_repo"
+            docker run --rm -e "SSH_PRIVATE_KEY=${{secrets.GITEE_RSA_PRIVATE_KEY}}" $(docker build -q .) "$source_repo" "$target_repo"
           done
           echo "view_log:"
           cat $log
+      
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: artifact
+          path: $log
 
 
