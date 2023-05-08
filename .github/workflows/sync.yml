@@ -37,7 +37,7 @@ jobs:
             source_repo=$(echo $line | awk '{print $1}') 
             target_repo=$(echo $line | awk '{print $2}')
             echo "Syncing $source_repo to $target_repo" | tee -a ../actlogs.txt
-            docker run --rm -e "SSH_PRIVATE_KEY=${{secrets.GITEE_RSA_PRIVATE_KEY}}" $(docker build -q .) "$source_repo" "$target_repo"
+            docker run --rm -e "SSH_PRIVATE_KEY=${{secrets.GITEE_RSA_PRIVATE_KEY}}" $(docker build -q .) "$source_repo" "$target_repo" || true
           done
           
           echo "view_log:"
