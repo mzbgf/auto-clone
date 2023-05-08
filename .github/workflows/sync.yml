@@ -12,7 +12,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Check
+      - name: Sync repositories
         run: |
           mkdir -p ~/.ssh
           log=$PWD/actlogs.txt
@@ -22,19 +22,20 @@ jobs:
           ssh -T git@gitlab.com | tee -a actlogs.txt
           echo "gitee:" > actlogs.txt
           ssh -T git@gitee.com | tee -a actlogs.txt
+          
           git clone https://github.com/wearerequired/git-mirror-action
           git clone https://github.com/mzbgf/auto-clone
+          
           file=$PWD/auto-clone/sync.conf
           cd ./git-mirror-action
 
-      - name: Sync repositories 
-        run: |
           egrep -v "^#|^$" $file | while read line; do
             source_repo=$(echo $line | awk '{print $1}') 
             target_repo=$(echo $line | awk '{print $2}')
             echo "Syncing $source_repo to $target_repo" | tee -a ../actlogs.txt
             docker run --rm -e "SSH_PRIVATE_KEY=${{secrets.GITEE_RSA_PRIVATE_KEY}}" $(docker build -q .) "$source_repo" "$target_repo"
           done
+          
           echo "view_log:"
           cat ../actlogs.txt
       
